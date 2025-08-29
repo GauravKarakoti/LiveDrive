@@ -1,6 +1,6 @@
 # LiveDrive
 
-[![LiveDrive Demo](https://img.shields.io/badge/Demo-Visit%20Site-blue?style=for-the-badge)](https://your-demo-link.vercel.app)
+[![LiveDrive Demo](https://img.shields.io/badge/Demo-Visit%20Site-blue?style=for-the-badge)](https://www.notion.so/LiveDrive-Filecoin-Onchain-Cloud-Cohort-90d5118ec28b4c16a83beeb8b8a0d906?source=copy_link)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 **Your permanent, programmable, and performant cloud drive.** LiveDrive offers a familiar cloud storage experience powered by the decentralized Filecoin network, combining hot storage performance with cold storage permanence.
