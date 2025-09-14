@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiveDrive - Decentralized Cloud Storage</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #64748b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --border: #e2e8f0;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+        
+        body {
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 24px;
+        }
+        
+        nav a {
+            text-decoration: none;
+            color: var(--secondary);
+            font-weight: 500;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        
+        nav a:hover, nav a.active {
+            color: var(--primary);
+        }
+        
+        .wallet-connect {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .connect-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .connect-btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .wallet-connected {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--light);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .wallet-address {
+            font-family: monospace;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 60px 0;
+            text-align: center;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-radius: 0 0 16px 16px;
+            margin-bottom: 40px;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 16px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--secondary);
+            max-width: 700px;
+            margin: 0 auto 32px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #f0f9ff;
+        }
+        
+        /* Dashboard */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .sidebar {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            height: fit-content;
+        }
+        
+        .sidebar h3 {
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .sidebar ul {
+            list-style: none;
+        }
+        
+        .sidebar li {
+            margin-bottom: 12px;
+        }
+        
+        .sidebar a {
+            text-decoration: none;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .sidebar a:hover, .sidebar a.active {
+            background-color: #f0f9ff;
+            color: var(--primary);
+        }
+        
+        .storage-stats {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: var(--success);
+            border-radius: 4px;
+        }
+        
+        .main-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .content-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 24px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover, .upload-area.highlight {
+            border-color: var(--primary);
+            background-color: #f8fafc;
+        }
+        
+        .upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+        
+        .file-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        
+        .file-card {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+        
+        .file-card:hover {
+            box-shadow: var(--card-shadow);
+            transform: translateY(-2px);
+        }
+        
+        .file-icon {
+            font-size: 2rem;
+            margin-bottom: 12px;
+            color: var(--secondary);
+        }
+        
+        .file-name {
+            font-weight: 500;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .file-details {
+            font-size: 0.875rem;
+            color: var(--secondary);
+        }
+        
+        .file-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+        
+        .status-active {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-pending {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        
+        .status-processing {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        
+        /* Subscription Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .modal {
+            background-color: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+        
+        .plan-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .plan-option {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .plan-option.selected {
+            border-color: var(--primary);
+            background-color: #f0f9ff;
+        }
+        
+        .plan-option h4 {
+            margin-bottom: 8px;
+        }
+        
+        .plan-price {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .plan-features {
+            font-size: 0.875rem;
+            color: var(--secondary);
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+        
+        .footer-column h3 {
+            margin-bottom: 16px;
+            font-size: 1.125rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column li {
+            margin-bottom: 8px;
+        }
+        
+        .footer-column a {
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-column a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            margin-top: 30px;
+            border-top: 1px solid #334155;
+            color: #94a3b8;
+        }
+
+        /* Settings Panel */
+        .settings-panel {
+            display: none;
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .settings-section {
+            margin-bottom: 24px;
+        }
+
+        .settings-section h3 {
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-option:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .file-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            nav ul {
+                gap: 16px;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 13H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M16 17H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M10 9H8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span>LiveDrive</span>
+            </div>
+            
+            <nav>
+                <ul>
+                    <li><a href="#" class="active nav-link" data-target="dashboard">Dashboard</a></li>
+                    <li><a href="#" class="nav-link" data-target="files">Files</a></li>
+                    <li><a href="#" class="nav-link" data-target="shared">Shared</a></li>
+                    <li><a href="#" class="nav-link" data-target="settings">Settings</a></li>
+                </ul>
+            </nav>
+            
+            <div class="wallet-connect">
+                <div class="wallet-connected">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="wallet-address">0x742d...35f9</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <div class="container">
+            <h1>Decentralized Cloud Storage</h1>
+            <p>Store your files securely on the Filecoin network with cryptographic guarantees of availability and uncorrupted data.</p>
+            <div class="hero-buttons">
+                <button class="btn-primary" id="uploadBtn">Upload Files</button>
+                <button class="btn-secondary" id="learnMoreBtn">Learn More</button>
+            </div>
+        </div>
+    </section>
+    
+    <section class="container dashboard" id="dashboard-section">
+        <div class="sidebar">
+            <h3>Storage</h3>
+            <ul>
+                <li><a href="#" class="active filter-link" data-filter="all">All Files</a></li>
+                <li><a href="#" class="filter-link" data-filter="document">Documents</a></li>
+                <li><a href="#" class="filter-link" data-filter="image">Images</a></li>
+                <li><a href="#" class="filter-link" data-filter="video">Videos</a></li>
+                <li><a href="#" class="filter-link" data-filter="audio">Audio</a></li>
+            </ul>
+            
+            <div class="storage-stats">
+                <h3>Storage Usage</h3>
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+                <p></p>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="content-header">
+                <h2>My Files</h2>
+                <div class="actions">
+                    <button class="btn-primary" id="createSubscription">Create Subscription</button>
+                </div>
+            </div>
+            
+            <div class="upload-area" id="dropZone">
+                <div class="upload-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17 8L12 3L7 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 3V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3>Drag and drop files here</h3>
+                <p>or click to browse your files</p>
+            </div>
+            
+            <div class="file-list" id="fileList">
+                </div>
+        </div>
+    </section>
+
+    <section class="container settings-panel" id="settings-section">
+        <div class="settings-section">
+            <h3>Account Settings</h3>
+            <div class="settings-option">
+                <div>
+                    <h4>Email Notifications</h4>
+                    <p>Receive updates about your account activity</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="settings-option">
+                <div>
+                    <h4>Two-Factor Authentication</h4>
+                    <p>Add an extra layer of security to your account</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h3>Storage Settings</h3>
+            <div class="settings-option">
+                <div>
+                    <h4>Auto Backup</h4>
+                    <p>Automatically backup files from connected devices</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="settings-option">
+                <div>
+                    <h4>File Versioning</h4>
+                    <p>Keep previous versions of your files</p>
+                </div>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </section>
+    
+    <div class="modal-overlay" id="subscriptionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>Create Storage Subscription</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            
+            <div class="plan-options">
+                <div class="plan-option selected">
+                    <h4>Basic Plan</h4>
+                    <div class="plan-price">5 FIL/month</div>
+                    <ul class="plan-features">
+                        <li>100 GB Storage</li>
+                        <li>Unlimited Bandwidth</li>
+                        <li>Basic Support</li>
+                    </ul>
+                </div>
+                
+                <div class="plan-option">
+                    <h4>Pro Plan</h4>
+                    <div class="plan-price">15 FIL/month</div>
+                    <ul class="plan-features">
+                        <li>500 GB Storage</li>
+                        <li>Priority Bandwidth</li>
+                        <li>Priority Support</li>
+                        <li>Advanced Sharing Options</li>
+                    </ul>
+                </div>
+                
+                <div class="plan-option">
+                    <h4>Enterprise Plan</h4>
+                    <div class="plan-price">50 FIL/month</div>
+                    <ul class="plan-features">
+                        <li>2 TB Storage</li>
+                        <li>Maximum Bandwidth Priority</li>
+                        <li>24/7 Support</li>
+                        <li>Team Management</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <button class="btn-primary" id="subscribeWalletBtn" style="width: 100%">Subscribe with Wallet</button>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>LiveDrive</h3>
+                    <ul>
+                        <li><a href="https://www.notion.so/LiveDrive-Filecoin-Onchain-Cloud-Cohort-90d5118ec28b4c16a83beeb8b8a0d906?source=copy_link">About Us</a></li>
+                        <li><a href="https://t.me/GauravKarakoti">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="https://github.com/GauravKarakoti/LiveDrive">Developers</a></li>
+                        <li><a href="https://drive.google.com/file/d/1y-B8Nf--6fmBkTlxnBs_1fjKyLY_MpfM/view">Documentation</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                &copy; 2025 LiveDrive. All rights reserved. Built on Filecoin.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const subscriptionModal = document.getElementById('subscriptionModal');
+            const createSubscriptionBtn = document.getElementById('createSubscription');
+            const closeModalBtn = document.querySelector('.close-modal');
+            const planOptions = document.querySelectorAll('.plan-option');
+            const subscribeWalletBtn = document.getElementById('subscribeWalletBtn');
+            const dropZone = document.getElementById('dropZone');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const fileListContainer = document.getElementById('fileList');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const dashboardSection = document.getElementById('dashboard-section');
+            const settingsSection = document.getElementById('settings-section');
+            const learnMoreBtn = document.getElementById('learnMoreBtn');
+            const filterLinks = document.querySelectorAll('.filter-link');
+
+            // --- LOCAL STORAGE KEY ---
+            const STORAGE_KEY = 'liveDriveFiles';
+
+            // --- MODAL FUNCTIONALITY ---
+            createSubscriptionBtn.addEventListener('click', () => {
+                subscriptionModal.style.display = 'flex';
+            });
+            
+            closeModalBtn.addEventListener('click', () => {
+                subscriptionModal.style.display = 'none';
+            });
+            
+            subscriptionModal.addEventListener('click', (e) => {
+                if (e.target === subscriptionModal) {
+                    subscriptionModal.style.display = 'none';
+                }
+            });
+            
+            planOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    planOptions.forEach(opt => opt.classList.remove('selected'));
+                    option.classList.add('selected');
+                });
+            });
+
+            subscribeWalletBtn.addEventListener('click', () => {
+                alert('Connecting wallet and processing subscription...');
+                setTimeout(() => {
+                    alert('Subscription successful! Your storage plan is now active.');
+                    subscriptionModal.style.display = 'none';
+                }, 1500);
+            });
+            
+            // --- FILE UPLOAD AND PERSISTENCE ---
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.add('highlight'), false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropZone.addEventListener(eventName, () => dropZone.classList.remove('highlight'), false);
+            });
+            
+            dropZone.addEventListener('drop', (e) => {
+                handleFiles(e.dataTransfer.files);
+            }, false);
+
+            const openFileDialog = () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.multiple = true;
+                input.onchange = () => handleFiles(input.files);
+                input.click();
+            };
+
+            uploadBtn.addEventListener('click', openFileDialog);
+            dropZone.addEventListener('click', openFileDialog);
+            
+            function handleFiles(files) {
+                let storedFiles = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                
+                ([...files]).forEach(file => {
+                    const { type } = getFileTypeAndIcon(file.name);
+                    const newFile = {
+                        name: file.name,
+                        size: file.size,
+                        type: type,
+                        timestamp: new Date().toISOString()
+                    };
+                    storedFiles.unshift(newFile);
+                });
+                
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(storedFiles));
+                loadAndRenderFiles();
+                updateStorageUsage(); // Update usage after adding files
+            }
+
+            function loadAndRenderFiles() {
+                const storedFiles = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                fileListContainer.innerHTML = ''; // Clear the list before rendering
+                
+                storedFiles.forEach(file => {
+                    const { icon } = getFileTypeAndIcon(file.name);
+                    const fileCard = document.createElement('div');
+                    fileCard.className = 'file-card';
+                    fileCard.setAttribute('data-type', file.type);
+                    
+                    fileCard.innerHTML = `
+                        <div class="file-icon">${icon}</div>
+                        <div class="file-name" title="${file.name}">${file.name}</div>
+                        <div class="file-details">${formatFileSize(file.size)} • ${getTimeAgo(file.timestamp)}</div>
+                        <div class="file-status status-active">Active</div>
+                    `;
+                    fileListContainer.appendChild(fileCard);
+                });
+            }
+
+            // --- STORAGE USAGE CALCULATION ---
+            function updateStorageUsage() {
+                const storedFiles = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+                const usageText = document.querySelector('.storage-stats p');
+                const progressBar = document.querySelector('.storage-stats .progress');
+
+                const totalStorage = 12 * 1024 * 1024 * 1024; // 12 GB in bytes
+                const usedBytes = storedFiles.reduce((total, file) => total + file.size, 0);
+                const percentage = Math.min((usedBytes / totalStorage) * 100, 100);
+
+                progressBar.style.width = `${percentage}%`;
+                usageText.textContent = `${formatFileSize(usedBytes)} of ${formatFileSize(totalStorage)} used`;
+            }
+
+            // --- UTILITY FUNCTIONS ---
+            function formatFileSize(bytes) {
+                if (bytes === 0) return '0 Bytes';
+                const k = 1024;
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            }
+            
+            function getFileTypeAndIcon(fileName) {
+                 const extension = fileName.split('.').pop().toLowerCase();
+                 const genericFileIcon = `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 2H6C4.89543 2 4 2.89543 4 4V20C4 21.1046 4.89543 22 6 22H18C19.1046 22 20 21.1046 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M14 2V8H20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+                 const fileTypes = {
+                     document: { ext: ['pdf', 'doc', 'docx', 'txt', 'xls', 'xlsx', 'ppt', 'pptx'], icon: genericFileIcon },
+                     image: { ext: ['jpg', 'jpeg', 'png', 'gif', 'svg', 'webp'], icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><path d="M21 15l-5-5L5 21" stroke="currentColor" stroke-width="2"/></svg>` },
+                     video: { ext: ['mp4', 'mov', 'avi', 'mkv', 'webm'], icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M23 7L16 12L23 17V7Z" stroke="currentColor" stroke-width="2"/><path d="M14 5H3C1.89543 5 1 5.89543 1 7V17C1 18.1046 1.89543 19 3 19H14C15.1046 19 16 18.1046 16 17V7C16 5.89543 15.1046 5 14 5Z" stroke="currentColor" stroke-width="2"/></svg>` },
+                     audio: { ext: ['mp3', 'wav', 'ogg', 'flac'], icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 18V5l12-2v13" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="18" r="3" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="16" r="3" stroke="currentColor" stroke-width="2"/></svg>` },
+                     archive: { ext: ['zip', 'rar', '7z', 'tar', 'gz'], icon: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 16V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2h14a2 2 0 002-2z" stroke="currentColor" stroke-width="2"/><path d="M12 6v6" stroke="currentColor" stroke-width="2"/></svg>` }
+                 };
+
+                 for (const type in fileTypes) {
+                     if (fileTypes[type].ext.includes(extension)) {
+                         return { type, icon: fileTypes[type].icon };
+                     }
+                 }
+                 return { type: 'document', icon: genericFileIcon };
+            }
+
+            function getTimeAgo(isoString) {
+                const date = new Date(isoString);
+                const seconds = Math.floor((new Date() - date) / 1000);
+                let interval = seconds / 31536000;
+                if (interval > 1) return Math.floor(interval) + " years ago";
+                interval = seconds / 2592000;
+                if (interval > 1) return Math.floor(interval) + " months ago";
+                interval = seconds / 86400;
+                if (interval > 1) return Math.floor(interval) + " days ago";
+                interval = seconds / 3600;
+                if (interval > 1) return Math.floor(interval) + " hours ago";
+                interval = seconds / 60;
+                if (interval > 1) return Math.floor(interval) + " minutes ago";
+                return "Just now";
+            }
+
+            // --- NAVIGATION AND FILTERING ---
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navLinks.forEach(navLink => navLink.classList.remove('active'));
+                    link.classList.add('active');
+                    const target = link.getAttribute('data-target');
+                    
+                    if (target === 'settings') {
+                        dashboardSection.style.display = 'none';
+                        settingsSection.style.display = 'block';
+                    } else {
+                        dashboardSection.style.display = 'grid';
+                        settingsSection.style.display = 'none';
+                        document.querySelector('.content-header h2').textContent = 
+                            target === 'files' ? 'All Files' : 
+                            target === 'shared' ? 'Shared Files' : 'My Files';
+                    }
+                });
+            });
+
+            learnMoreBtn.addEventListener('click', () => {
+                alert('LiveDrive is a decentralized cloud storage solution built on Filecoin. It provides cryptographic guarantees that your data is always available and uncorrupted, with fast CDN-accelerated retrieval.');
+            });
+
+            filterLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    filterLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    const filter = link.getAttribute('data-filter');
+                    document.querySelectorAll('.file-card').forEach(card => {
+                        card.style.display = (filter === 'all' || card.getAttribute('data-type') === filter) ? 'block' : 'none';
+                    });
+                });
+            });
+
+            // --- INITIAL LOAD ---
+            loadAndRenderFiles();
+            updateStorageUsage();
+        });
+    </script>
+</body>
+</html>
